@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <h1>
+    TODO list
+  </h1>
+  <a href="{% url 'todo:task_create' %}" class="btn btn-primary link-to-page" style="margin-bottom: 20px">
+    Add Task
+  </a>
+
+  {% if task_list %}
+    {% for task in task_list %}
+
+      <div style="border: solid #5b5b5b; margin-bottom: 10px; padding: 40px" class="rounded">
+
+        {% if  task.complete %}
+          <h2>
+            {{ task.name }}
+            <a style="float: right" href="{% url 'todo:task_toggle' pk=task.id %}"
+               class="btn btn-secondary link-to-page">
+              Undo
+            </a>
+          </h2>
+        {% else %}
+          <h2>
+            {{ task.name }}
+            <a style="float: right" href="{% url 'todo:task_toggle' pk=task.id %}"
+               class="btn btn-success link-to-page">
+              Complete
+            </a>
+          </h2>
+        {% endif %}
+
+        <div style="display: flex">
+          <h2>
+            {{ task.title }}
+          </h2>
+          {% if  task.complete %}
+            <h5 style="color: #7de87d">Done</h5>
+          {% else %}
+            <h5 style="color: #c92525">Not Done</h5>
+            {% if task.date > task.deadline %}
+              <h5 style="color: #c92525; margin-left: 10px;">The time is up.</h5>
+            {% endif %}
+          {% endif %}
+        </div>
+
+        <div style="display: flex;">
+          <p>Create: {{ task.date }}</p>
+          <p style="color: #7a3333; margin-left: 10px">Deadline: {{ task.deadline }}</p>
+        </div>
+
+        <div style="display: flex;">
+          <p>Tags:
+            {% for tag in task.tags.all %}
+              {{ tag.name }}
+            {% endfor %}
+          </p>
+
+          <a href="{% url 'todo:task_update' pk=task.id %}" style="margin-left: 10px">Update</a>
+          <a href="{% url 'todo:task_delete'  pk=task.id %}" style="margin-left: 10px">Delete</a>
+        </div>
+      </div>
+
+    {% endfor %}
+  {% else %}
+    <h4>Todo list is empty</h4>
+  {% endif %}
+
+{% endblock %}
